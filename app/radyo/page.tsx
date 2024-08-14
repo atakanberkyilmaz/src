@@ -1,11 +1,16 @@
 "use client";
 
-import React from "react";
-import Layout from "../layout";
+import React, { useEffect } from "react";
 import { useRadioContext } from "../contexts/RadioContext";
 
 export default function Radyo() {
   const { currentStation, isPlaying, playStation } = useRadioContext();
+
+  // useEffect ile hangi istasyonun seçildiğini ve ses oynatım durumunu kontrol ediyoruz
+  useEffect(() => {
+    console.log("Current Station:", currentStation);
+    console.log("Is Playing:", isPlaying);
+  }, [currentStation, isPlaying]);
 
   return (
     <div className="flex flex-col items-center justify-center px-4 py-8 text-center">
@@ -15,10 +20,6 @@ export default function Radyo() {
         dinleyicilere son dakika haberleri ve eğlenceli programlarla dolu bir
         deneyim için siz de bizi dinleyin!
       </p>
-      <div className="mt-10 flex space-x-8">
-        <div className="border-b-4 border-orange-500 pb-2">NGG FM</div>
-        <div className="border-b pb-2">SLAV FM</div>
-      </div>
       <ul className="mt-6 space-y-4 text-left">
         {[
           {

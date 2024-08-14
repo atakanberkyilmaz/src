@@ -1,5 +1,5 @@
 import { AppProps } from 'next/app';
-import { RadioProvider } from '../app/contexts/RadioContext'; // Doğru yolda olduğundan emin olun
+import { RadioProvider } from './contexts/RadioContext';
 import '../styles/globals.css';
 
 function MyApp({ Component, pageProps }: AppProps) {

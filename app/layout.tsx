@@ -3,13 +3,14 @@
 import React from "react";
 import Link from "next/link";
 import "./globals.css";
-// RadioProvider'ı kullanmıyoruz burada
 import { useRadioContext } from "./contexts/RadioContext";
 
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { currentStation, isPlaying, togglePlay } = useRadioContext();
 
   return (
+    <html>
+      <body>
     <div>
       <header className="w-full p-4 flex justify-between items-center border-b">
         <img src="/logo.nggmedya.png" alt="Logo" className="h-10" />
@@ -34,6 +35,9 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
         </div>
       )}
     </div>
+    </body>
+    </html>
+  
   );
 };
 
