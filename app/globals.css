@@ -17,17 +17,33 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: linear-gradient(to bottom, #f8f8f8 0%, #ffffff 100%); /* Üstten alta geçişli arka plan */
+  color: #000000; /* Siyah yazı rengi */
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
   }
+
+  /* Diğer CSS kodlarını buraya ekleyebilirsiniz. */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background-color: #fff;
+  }
+
+  .nav a {
+    margin-right: 20px;
+    text-decoration: none;
+    color: #333;
+  }
+
+  .footer {
+    background-color: #ffffff; /* Beyaz arka plan */
+    color: #000000; /* Siyah yazı rengi */
+    border-top: 1px solid #e0e0e0; /* Üst kenar için hafif bir sınır */
+  }
+  
 }
