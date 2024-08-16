@@ -1,4 +1,6 @@
+"use client";
 import { createContext, useContext, useState, useEffect, useRef } from "react";
+
 
 interface RadioContextType {
   currentStation: string | null;
@@ -6,6 +8,7 @@ interface RadioContextType {
   playStation: (stationUrl: string) => void;
   togglePlay: () => void;
 }
+
 
 const defaultContextValue: RadioContextType = {
   currentStation: null,
@@ -16,59 +19,94 @@ const defaultContextValue: RadioContextType = {
 
 const RadioContext = createContext<RadioContextType>(defaultContextValue);
 
-export const useRadioContext = () => {
-  const context = useContext(RadioContext);
-  if (!context) {
-    throw new Error("useRadioContext must be used within a RadioProvider");
-  }
-  return context;
-};
+export const useRadioContext = () => useContext(RadioContext);
 
 export const RadioProvider = ({ children }: { children: React.ReactNode }) => {
   const [currentStation, setCurrentStation] = useState<string | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Play fonksiyonu
   const playStation = (stationUrl: string) => {
-    const testStationUrl = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"; // Test için yerel bir ses dosyası URL'si
+    if (audioRef.current) {
+      if (currentStation !== stationUrl) {
+        setCurrentStation(stationUrl);
+        audioRef.current.src = stationUrl;
+      }
 
-    console.log("Playing station:", stationUrl);
-    if (stationUrl !== currentStation) {
-      setCurrentStation(testStationUrl); // Test için ses dosyasını kullan
-      setIsPlaying(true);
-    } else {
-      togglePlay();
+      
+      audioRef.current.volume = 1.0;
+      audioRef.current.muted = false;
+
+      console.log("Radyo başlatılıyor: ", stationUrl); 
+
+      audioRef.current.play()
+        .then(() => {
+          console.log("Radyo çalmaya başladı:", stationUrl);
+          setIsPlaying(true);
+        })
+        .catch((error) => {
+          console.error("Oynatma hatası:", error);
+          alert("Radyo çalınamıyor. Tarayıcı izinleri veya bağlantı ile ilgili bir sorun olabilir.");
+        });
     }
   };
+
 
   const togglePlay = () => {
-    setIsPlaying((prev) => {
-      if (prev) {
-        audioRef.current?.pause();
-      } else {
-        audioRef.current?.play();
-      }
-      return !prev;
-    });
-  };
-
-  useEffect(() => {
-    if (audioRef.current && currentStation) {
-      audioRef.current.src = currentStation;
+    if (audioRef.current) {
       if (isPlaying) {
-        audioRef.current.play();
-      } else {
         audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((error) => {
+            console.error("Oynatma hatası:", error);
+          });
       }
     }
-  }, [currentStation, isPlaying]);
+  };
+
+
+  useEffect(() => {
+    const audioElement = audioRef.current;
+    
+    const handleCanPlay = () => {
+      console.log("Audio hazır, oynatılabilir.");
+    };
+    
+    const handlePlay = () => {
+      console.log("Oynatma başladı.");
+    };
+    
+    const handleError = (error: any) => {
+      console.error("Audio hatası:", error);
+    };
+
+    if (audioElement) {
+      audioElement.addEventListener("canplay", handleCanPlay);
+      audioElement.addEventListener("play", handlePlay);
+      audioElement.addEventListener("error", handleError);
+    }
+
+    return () => {
+      if (audioElement) {
+        audioElement.removeEventListener("canplay", handleCanPlay);
+        audioElement.removeEventListener("play", handlePlay);
+        audioElement.removeEventListener("error", handleError);
+      }
+    };
+  }, [currentStation]);
 
   return (
     <RadioContext.Provider
       value={{ currentStation, isPlaying, playStation, togglePlay }}
     >
       {children}
-      <audio ref={audioRef} />
+      <audio ref={audioRef} controls /> 
     </RadioContext.Provider>
   );
 };

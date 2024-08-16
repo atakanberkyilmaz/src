@@ -1,16 +1,10 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useRadioContext } from "../contexts/RadioContext";
 
 export default function Radyo() {
   const { currentStation, isPlaying, playStation } = useRadioContext();
-
-  // useEffect ile hangi istasyonun seçildiğini ve ses oynatım durumunu kontrol ediyoruz
-  useEffect(() => {
-    console.log("Current Station:", currentStation);
-    console.log("Is Playing:", isPlaying);
-  }, [currentStation, isPlaying]);
 
   return (
     <div className="flex flex-col items-center justify-center px-4 py-8 text-center">
@@ -36,7 +30,10 @@ export default function Radyo() {
           <li key={station.name} className="flex justify-between items-center w-64 mx-auto">
             <span>{station.name}</span>
             <button
-              onClick={() => playStation(station.url)}
+              onClick={() => {
+                console.log(`${station.name} oynatılıyor...`);
+                playStation(station.url);
+              }}
               className={`p-2 rounded-full border text-orange-500 ${
                 currentStation === station.url && isPlaying
                   ? "border-orange-500 bg-orange-500 text-white"
